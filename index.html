@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tip Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 20px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+    }
+    label, input {
+      display: block;
+      margin: 10px 0;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 10px;
+      border-top: 1px solid #aaa;
+    }
+  </style>
+</head>
+<body>
+  <h2>Tip Calculator</h2>
+  <label>Food Amount ($):</label>
+  <input type="number" id="foodAmount" step="0.01">
+
+  <label>Tip Percent (%):</label>
+  <input type="number" id="tipPercent" step="0.01">
+
+  <button onclick="calculateTip()">Calculate Tip</button>
+
+  <div id="result"></div>
+
+  <script>
+    function calculateTip() {
+      const foodAmount = parseFloat(document.getElementById('foodAmount').value);
+      const tipPercent = parseFloat(document.getElementById('tipPercent').value);
+
+      if (isNaN(foodAmount) || isNaN(tipPercent)) {
+        document.getElementById('result').innerText = "Please enter valid numbers.";
+        return;
+      }
+
+      const tipAmount = foodAmount * (tipPercent / 100);
+      const total = foodAmount + tipAmount;
+
+      let comment = '';
+      if (tipPercent >= 18) {
+        comment = "You're a Saint!";
+      } else if (tipPercent >= 15) {
+        comment = "Good Tip!";
+      } else {
+        comment = "CHEAPSKATE!";
+      }
+
+      document.getElementById('result').innerHTML = `
+        <p>Tip Amount: $${tipAmount.toFixed(2)}</p>
+        <p>Total Amount: $${total.toFixed(2)}</p>
+        <strong>${comment}</strong>
+      `;
+    }
+  </script>
+</body>
+</html>
