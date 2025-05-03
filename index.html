@@ -2,28 +2,60 @@
 <html>
 <head>
   <title>Tip Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      max-width: 400px;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #f9f9f9;
+      max-width: 500px;
       margin: 50px auto;
-      padding: 20px;
-      border: 2px solid #ccc;
-      border-radius: 10px;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      animation: fadeIn 1s ease-in-out;
     }
-    label, input {
-      display: block;
-      margin: 10px 0;
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    #result {
-      margin-top: 20px;
+
+    input, button {
+      width: 100%;
       padding: 10px;
-      border-top: 1px solid #aaa;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+    }
+
+    button {
+      background: #00c6ff;
+      background: linear-gradient(to right, #0072ff, #00c6ff);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+    }
+
+    #result {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 10px;
+      font-size: 18px;
     }
   </style>
 </head>
 <body>
-  <h2>Tip Calculator</h2>
+  <h2><i class="fa-solid fa-calculator"></i> Tip Calculator</h2>
   <label>Food Amount ($):</label>
   <input type="number" id="foodAmount" step="0.01">
 
