@@ -2,8 +2,10 @@
 <html>
 <head>
   <title>Tip Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
   <style>
     body {
       font-family: 'Poppins', sans-serif;
@@ -52,48 +54,72 @@
       border-radius: 10px;
       font-size: 18px;
     }
+
+    #ocr-output {
+      font-size: 14px;
+      white-space: pre-wrap;
+      margin-top: 10px;
+      background-color: rgba(255,255,255,0.05);
+      padding: 10px;
+      border-radius: 8px;
+    }
   </style>
 </head>
 <body>
-  <h2><i class="fa-solid fa-calculator"></i> Tip Calculator</h2>
-  <label>Food Amount ($):</label>
-  <input type="number" id="foodAmount" step="0.01">
+  <h1>Tip Calculator</h1>
 
-  <label>Tip Percent (%):</label>
-  <input type="number" id="tipPercent" step="0.01">
+  <label for="billAmount">Bill Amount ($):</label>
+  <input type="number" id="billAmount" placeholder="Enter bill amount" />
+
+  <label for="tipPercentage">Tip Percentage (%):</label>
+  <input type="number" id="tipPercentage" placeholder="Enter tip percentage" />
 
   <button onclick="calculateTip()">Calculate Tip</button>
 
   <div id="result"></div>
 
+  <h2>📷 Scan Receipt (OCR)</h2>
+  <input type="file" accept="image/*" capture="environment" id="receipt-upload" />
+  <div id="ocr-output"></div>
+
   <script>
     function calculateTip() {
-      const foodAmount = parseFloat(document.getElementById('foodAmount').value);
-      const tipPercent = parseFloat(document.getElementById('tipPercent').value);
+      const billAmount = parseFloat(document.getElementById('billAmount').value);
+      const tipPercentage = parseFloat(document.getElementById('tipPercentage').value);
 
-      if (isNaN(foodAmount) || isNaN(tipPercent)) {
-        document.getElementById('result').innerText = "Please enter valid numbers.";
+      if (isNaN(billAmount) || isNaN(tipPercentage)) {
+        alert('Please enter valid numbers.');
         return;
       }
 
-      const tipAmount = foodAmount * (tipPercent / 100);
-      const total = foodAmount + tipAmount;
+      const tipAmount = billAmount * (tipPercentage / 100);
+      const totalAmount = billAmount + tipAmount;
 
-      let comment = '';
-      if (tipPercent >= 18) {
-        comment = "You're a Saint!";
-      } else if (tipPercent >= 15) {
-        comment = "Good Tip!";
-      } else {
-        comment = "CHEAPSKATE!";
-      }
-
-      document.getElementById('result').innerHTML = `
-        <p>Tip Amount: $${tipAmount.toFixed(2)}</p>
-        <p>Total Amount: $${total.toFixed(2)}</p>
-        <strong>${comment}</strong>
-      `;
+      document.getElementById('result').innerHTML =
+        `<p>Tip: $${tipAmount.toFixed(2)}</p><p>Total: $${totalAmount.toFixed(2)}</p>`;
     }
+
+    document.getElementById('receipt-upload').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      document.getElementById('ocr-output').textContent = 'Scanning receipt...';
+
+      const result = await Tesseract.recognize(file, 'eng', {
+        logger: m => console.log(m)
+      });
+
+      const text = result.data.text;
+      document.getElementById('ocr-output').textContent = text;
+
+      const match = text.match(/subtotal\s*[:\-]?\s*\$?([\d,.]+)/i);
+      if (match) {
+        const subtotal = parseFloat(match[1].replace(/,/g, ''));
+        document.getElementById('billAmount').value = subtotal.toFixed(2);
+      } else {
+        alert('Could not find "Subtotal" in the scanned receipt text.');
+      }
+    });
   </script>
 </body>
 </html>
