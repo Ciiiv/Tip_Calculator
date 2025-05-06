@@ -80,6 +80,11 @@
       background: linear-gradient(to right, #00c6ff, #0072ff);
       transition: width 0.2s ease;
     }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+    }
   </style>
 </head>
 <body>
@@ -91,7 +96,10 @@
   <label for="tipPercentage">Tip Percentage (%):</label>
   <input type="number" id="tipPercentage" placeholder="Enter tip percentage" />
 
-  <button onclick="calculateTip()">Calculate Tip</button>
+  <div class="button-group">
+    <button onclick="calculateTip()">Calculate Tip</button>
+    <button onclick="resetForm()">Reset</button>
+  </div>
 
   <div id="result"></div>
 
@@ -119,7 +127,16 @@
         `<p>Tip: $${tipAmount.toFixed(2)}</p><p>Total: $${totalAmount.toFixed(2)}</p>`;
     }
 
-    // OCR + progress bar
+    function resetForm() {
+      document.getElementById('billAmount').value = '';
+      document.getElementById('tipPercentage').value = '';
+      document.getElementById('result').innerHTML = '';
+      document.getElementById('ocr-output').textContent = '';
+      document.getElementById('progress-bar').style.width = '0%';
+      document.getElementById('progress-bar-container').style.display = 'none';
+      document.getElementById('receipt-upload').value = '';
+    }
+
     document.getElementById('receipt-upload').addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
@@ -150,7 +167,7 @@
       }
     });
 
-    // Enable pressing Enter to calculate
+    // Enable Enter key to calculate
     document.getElementById('billAmount').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') calculateTip();
     });
