@@ -63,6 +63,23 @@
       padding: 10px;
       border-radius: 8px;
     }
+
+    #progress-bar-container {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      margin-top: 10px;
+      height: 10px;
+      width: 100%;
+      overflow: hidden;
+      display: none;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      transition: width 0.2s ease;
+    }
   </style>
 </head>
 <body>
@@ -80,6 +97,9 @@
 
   <h2>📷 Scan Receipt (OCR)</h2>
   <input type="file" accept="image/*" capture="environment" id="receipt-upload" />
+  <div id="progress-bar-container">
+    <div id="progress-bar"></div>
+  </div>
   <div id="ocr-output"></div>
 
   <script>
@@ -99,16 +119,25 @@
         `<p>Tip: $${tipAmount.toFixed(2)}</p><p>Total: $${totalAmount.toFixed(2)}</p>`;
     }
 
+    // OCR + progress bar
     document.getElementById('receipt-upload').addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
 
       document.getElementById('ocr-output').textContent = 'Scanning receipt...';
+      document.getElementById('progress-bar-container').style.display = 'block';
+      document.getElementById('progress-bar').style.width = '0%';
 
       const result = await Tesseract.recognize(file, 'eng', {
-        logger: m => console.log(m)
+        logger: m => {
+          if (m.status === 'recognizing text') {
+            const pct = Math.round(m.progress * 100);
+            document.getElementById('progress-bar').style.width = pct + '%';
+          }
+        }
       });
 
+      document.getElementById('progress-bar-container').style.display = 'none';
       const text = result.data.text;
       document.getElementById('ocr-output').textContent = text;
 
@@ -119,6 +148,15 @@
       } else {
         alert('Could not find "Subtotal" in the scanned receipt text.');
       }
+    });
+
+    // Enable pressing Enter to calculate
+    document.getElementById('billAmount').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') calculateTip();
+    });
+
+    document.getElementById('tipPercentage').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') calculateTip();
     });
   </script>
 </body>
