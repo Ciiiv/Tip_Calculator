@@ -85,6 +85,20 @@
       display: flex;
       gap: 10px;
     }
+
+    .reset-button {
+      background: transparent;
+      border: 2px solid #f9f9f9;
+      color: #f9f9f9;
+      font-weight: bold;
+      transition: 0.3s ease;
+    }
+
+    .reset-button:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: scale(1.05);
+    }
+
   </style>
 </head>
 <body>
@@ -98,7 +112,7 @@
 
   <div class="button-group">
     <button onclick="calculateTip()">Calculate Tip</button>
-    <button onclick="resetForm()">Reset</button>
+    <button onclick="resetForm()" class="reset-button">Reset</button>
   </div>
 
   <div id="result"></div>
